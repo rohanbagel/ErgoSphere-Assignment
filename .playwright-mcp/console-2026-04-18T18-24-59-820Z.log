@@ -1,0 +1,28 @@
+[    1183ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/react-dom_client.js?v=de516154:14337
+[    1252ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[    1253ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[    1268ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[    1268ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   16733ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/react-dom_client.js?v=de516154:14337
+[   16778ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/react-dom_client.js?v=de516154:14337
+[   17469ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/qa/ask/' from origin 'http://localhost:5174' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/ask:0
+[   17470ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/qa/ask/:0
+[   24477ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/react-dom_client.js?v=de516154:14337
+[   65901ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   65902ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   65911ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   65911ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   67235ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   67236ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   67829ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   67829ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   67989ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   67990ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   68149ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   68149ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   68321ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   68322ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   68473ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   68473ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
+[   68700ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/books/' from origin 'http://localhost:5174' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5174/books:0
+[   68700ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/books/:0
