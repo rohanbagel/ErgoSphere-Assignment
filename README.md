@@ -1,19 +1,36 @@
 # AI-Powered Book Intelligence Platform
 
+> **Important (Render Free Tier Cold Start):** The backend is hosted on Render free tier, which goes idle after inactivity. The first request can take **up to 60 seconds** to wake the service, so the site may not work immediately for about a minute.
+
 Full-stack assignment project built with Django + DRF (backend) and React + Vite + Tailwind (frontend).
+
+## Live Deployment
+
+- Frontend (Vercel): https://ergosphere-three.vercel.app
+
+## Hosting Architecture
+
+- **Vercel** is used to host and serve the React frontend (`frontend/`) as a fast static deployment.
+- **Render** is used to host the Django backend API (`backend/`) and handle server-side logic/routes.
+- **ChromaDB** is used as the vector database for embeddings and RAG retrieval in the Q&A pipeline.
+- The frontend on Vercel calls backend APIs on Render, and the backend queries ChromaDB for retrieval-augmented responses.
 
 ## Screenshots (UI)
 
 ### 1) Books Listing Dashboard
+
 ![Books Listing Dashboard](screenshots/01-books-page.png)
 
 ### 2) Book Detail + AI Insights + Recommendations
+
 ![Book Detail Page](screenshots/02-book-detail-page.png)
 
 ### 3) Q&A (RAG) Interface
+
 ![Q&A Form](screenshots/03-ask-page-form.png)
 
 ### 4) Q&A Submitted State
+
 ![Q&A Submitted](screenshots/04-ask-page-submitted.png)
 
 ## Tech Stack
@@ -210,6 +227,7 @@ Sample response shape:
 **Question:** `List two recurring themes across the ingested books.`
 
 **Answer (from running system):**
+
 - Challenging societal norms and hypocrisy
 - Exploring connection and relationships
 
@@ -220,6 +238,7 @@ Sample response shape:
 **Question:** `What are the key themes of this book? (book_id=1)`
 
 **Answer (from running system):**
+
 - The system asked for more context when insufficient chunk context was retrieved for that specific query.
 
 **Citations returned:** `0`
@@ -249,14 +268,14 @@ python manage.py test
 
 ## Submission Checklist
 
-- [x] Code pushed to GitHub repository
-- [x] README includes 3-4 UI screenshots
-- [x] README includes setup instructions
-- [x] README includes API documentation
-- [x] README includes sample Q&A
-- [x] `requirements.txt` included (`backend/requirements.txt`)
-- [x] Testing samples included (`samples/`)
-- [ ] Fill repository link form: https://forms.gle/Fby8pMSmBJqjuVf56
+- [X] Code pushed to GitHub repository
+- [X] README includes 3-4 UI screenshots
+- [X] README includes setup instructions
+- [X] README includes API documentation
+- [X] README includes sample Q&A
+- [X] `requirements.txt` included (`backend/requirements.txt`)
+- [X] Testing samples included (`samples/`)
+- [X] Fill repository link form: https://forms.gle/Fby8pMSmBJqjuVf56
 
 ## Notes
 
