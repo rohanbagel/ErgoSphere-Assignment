@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import html
+import re
 from urllib.parse import urljoin
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+import requests
 
 
 @dataclass
@@ -19,19 +17,6 @@ class ScrapedBook:
     description: str
     category: str
     image_url: str
-
-
-def _build_driver() -> webdriver.Chrome:
-    options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
-
-
 def _parse_price(price_text: str) -> float | None:
     try:
         return float(price_text.replace("£", "").strip())
@@ -53,76 +38,106 @@ def _parse_rating(pod_class: str) -> float | None:
     return None
 
 
-def scrape_books(base_url: str, max_pages: int = 3) -> list[ScrapedBook]:
-    driver = _build_driver()
+def _fetch_html(url: str) -> str:
+    response = requests.get(url, timeout=30)
+    response.raise_for_status()
+    return response.text
+
+
+def _extract_listing_summaries(page_html: str, page_url: str) -> tuple[list[dict], str | None]:
     summaries: list[dict] = []
 
-    try:
-        driver.get(base_url)
-        pages_done = 0
+    pod_blocks = re.findall(r"<article\s+class=\"product_pod\".*?</article>", page_html, flags=re.DOTALL)
+    for block in pod_blocks:
+        anchor_match = re.search(
+            r"<h3>\s*<a\s+[^>]*href=\"([^\"]+)\"[^>]*title=\"([^\"]+)\"",
+            block,
+            flags=re.DOTALL,
+        )
+        if not anchor_match:
+            continue
 
-        while pages_done < max_pages:
-            pods = driver.find_elements(By.CSS_SELECTOR, "article.product_pod")
-            for pod in pods:
-                anchor = pod.find_element(By.CSS_SELECTOR, "h3 a")
-                title = anchor.get_attribute("title")
-                detail_url = urljoin(driver.current_url, anchor.get_attribute("href"))
-                price_text = pod.find_element(By.CSS_SELECTOR, "p.price_color").text
-                rating_class = pod.find_element(By.CSS_SELECTOR, "p.star-rating").get_attribute("class")
-                summaries.append(
-                    {
-                        "title": title,
-                        "book_url": detail_url,
-                        "price": _parse_price(price_text),
-                        "rating": _parse_rating(rating_class),
-                    }
-                )
+        href, title = anchor_match.groups()
+        detail_url = urljoin(page_url, html.unescape(href))
+        title = html.unescape(title).strip()
 
-            next_buttons = driver.find_elements(By.CSS_SELECTOR, "li.next a")
-            if not next_buttons:
-                break
-            next_url = urljoin(driver.current_url, next_buttons[0].get_attribute("href"))
-            driver.get(next_url)
-            pages_done += 1
+        price_match = re.search(r"<p\s+class=\"price_color\">\s*([^<]+)\s*</p>", block)
+        price_text = html.unescape(price_match.group(1)).strip() if price_match else ""
 
-        results: list[ScrapedBook] = []
-        for summary in summaries:
-            driver.get(summary["book_url"])
+        rating_match = re.search(r"<p\s+class=\"star-rating\s+([^\"]+)\"", block)
+        rating_class = rating_match.group(1).strip() if rating_match else ""
 
-            description = ""
-            try:
-                desc_anchor = driver.find_element(By.ID, "product_description")
-                description = desc_anchor.find_element(By.XPATH, "following-sibling::p").text
-            except Exception:
-                description = ""
+        summaries.append(
+            {
+                "title": title,
+                "book_url": detail_url,
+                "price": _parse_price(price_text),
+                "rating": _parse_rating(rating_class),
+            }
+        )
 
-            category = ""
-            try:
-                breadcrumb = driver.find_elements(By.CSS_SELECTOR, "ul.breadcrumb li a")
-                if len(breadcrumb) >= 3:
-                    category = breadcrumb[2].text.strip()
-            except Exception:
-                category = ""
+    next_match = re.search(r"<li\s+class=\"next\">\s*<a\s+href=\"([^\"]+)\"", page_html)
+    next_url = urljoin(page_url, html.unescape(next_match.group(1))) if next_match else None
+    return summaries, next_url
 
-            image_url = ""
-            try:
-                image = driver.find_element(By.CSS_SELECTOR, "div.item.active img")
-                image_url = urljoin(driver.current_url, image.get_attribute("src"))
-            except Exception:
-                image_url = ""
 
-            results.append(
-                ScrapedBook(
-                    title=summary["title"],
-                    book_url=summary["book_url"],
-                    price=summary["price"],
-                    rating=summary["rating"],
-                    description=description,
-                    category=category,
-                    image_url=image_url,
-                )
+def _extract_description(detail_html: str) -> str:
+    match = re.search(
+        r"id=\"product_description\".*?</h2>\s*<p>(.*?)</p>",
+        detail_html,
+        flags=re.DOTALL,
+    )
+    if not match:
+        return ""
+
+    text = re.sub(r"<[^>]+>", "", match.group(1))
+    return html.unescape(text).strip()
+
+
+def _extract_category(detail_html: str) -> str:
+    categories = re.findall(r"<ul\s+class=\"breadcrumb\".*?</ul>", detail_html, flags=re.DOTALL)
+    if not categories:
+        return ""
+
+    anchor_texts = re.findall(r"<a[^>]*>(.*?)</a>", categories[0], flags=re.DOTALL)
+    if len(anchor_texts) < 3:
+        return ""
+    return html.unescape(re.sub(r"<[^>]+>", "", anchor_texts[2])).strip()
+
+
+def _extract_image_url(detail_html: str, detail_url: str) -> str:
+    match = re.search(r"<div\s+class=\"item active\".*?<img\s+[^>]*src=\"([^\"]+)\"", detail_html, flags=re.DOTALL)
+    if not match:
+        return ""
+    return urljoin(detail_url, html.unescape(match.group(1)))
+
+
+def scrape_books(base_url: str, max_pages: int = 3) -> list[ScrapedBook]:
+    summaries: list[dict] = []
+    next_url: str | None = base_url
+
+    pages_done = 0
+    while next_url and pages_done < max_pages:
+        page_html = _fetch_html(next_url)
+        page_summaries, next_url = _extract_listing_summaries(page_html, next_url)
+        summaries.extend(page_summaries)
+        pages_done += 1
+
+    results: list[ScrapedBook] = []
+    for summary in summaries:
+        detail_url = summary["book_url"]
+        detail_html = _fetch_html(detail_url)
+
+        results.append(
+            ScrapedBook(
+                title=summary["title"],
+                book_url=detail_url,
+                price=summary["price"],
+                rating=summary["rating"],
+                description=_extract_description(detail_html),
+                category=_extract_category(detail_html),
+                image_url=_extract_image_url(detail_html, detail_url),
             )
+        )
 
-        return results
-    finally:
-        driver.quit()
+    return results
