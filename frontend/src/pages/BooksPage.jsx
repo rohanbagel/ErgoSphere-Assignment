@@ -1,8 +1,26 @@
 import { BookCard } from '@/components/BookCard'
 import { useBooks } from '@/hooks/useBooks'
+import { uploadBooks } from '@/services/api'
+
+import { useState } from 'react'
 
 export function BooksPage() {
   const { books, count, loading, error, refresh } = useBooks()
+  const [ingesting, setIngesting] = useState(false)
+  const [ingestError, setIngestError] = useState('')
+
+  async function runIngestion() {
+    setIngesting(true)
+    setIngestError('')
+    try {
+      await uploadBooks({ max_pages: 2, max_books: 10 })
+      await refresh()
+    } catch (err) {
+      setIngestError(err?.message || 'Failed to run ingestion')
+    } finally {
+      setIngesting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -38,7 +56,20 @@ export function BooksPage() {
             {count} book{count === 1 ? '' : 's'} available
           </h2>
         </div>
+        <button
+          onClick={runIngestion}
+          disabled={ingesting}
+          className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-60"
+        >
+          {ingesting ? 'Ingesting...' : 'Run Ingestion'}
+        </button>
       </div>
+
+      {ingestError ? (
+        <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
+          {ingestError}
+        </div>
+      ) : null}
 
       {books.length === 0 ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-amber-900">

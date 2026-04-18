@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'apps.books',
+    'apps.ai',
+    'apps.ingestion',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +165,6 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+SCRAPER_BASE_URL = os.getenv("SCRAPER_BASE_URL", "https://books.toscrape.com/")
+SCRAPER_DEFAULT_MAX_PAGES = int(os.getenv("SCRAPER_DEFAULT_MAX_PAGES", "3"))

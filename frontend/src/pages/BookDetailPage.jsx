@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
-import { fetchBook } from '@/services/api'
+import { fetchBook, fetchRecommendations } from '@/services/api'
 
 export function BookDetailPage() {
   const { bookId } = useParams()
   const [book, setBook] = useState(null)
+  const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -18,13 +19,16 @@ export function BookDetailPage() {
 
       try {
         const payload = await fetchBook(bookId)
+        const recPayload = await fetchRecommendations(bookId)
         if (!cancelled) {
           setBook(payload)
+          setRecommendations(recPayload?.recommendations || [])
         }
       } catch (err) {
         if (!cancelled) {
           setError(err?.message || 'Failed to load book details')
           setBook(null)
+          setRecommendations([])
         }
       } finally {
         if (!cancelled) {
@@ -84,6 +88,15 @@ export function BookDetailPage() {
         {book.description || 'No description available yet.'}
       </p>
 
+      {book.insights ? (
+        <section className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700">AI Insights</h3>
+          <p className="mt-2 text-sm text-slate-700"><span className="font-semibold">Summary:</span> {book.insights.summary || 'N/A'}</p>
+          <p className="mt-2 text-sm text-slate-700"><span className="font-semibold">Genre:</span> {book.insights.genre || 'N/A'}</p>
+          <p className="mt-2 text-sm text-slate-700"><span className="font-semibold">Recommendation:</span> {book.insights.recommendation || 'N/A'}</p>
+        </section>
+      ) : null}
+
       <div className="mt-8 space-y-2 text-sm text-slate-700">
         <p>
           Insights ready:{' '}
@@ -100,6 +113,23 @@ export function BookDetailPage() {
           Open source page
         </a>
       </div>
+
+      <section className="mt-8">
+        <h3 className="text-lg font-semibold text-slate-900">Related Books</h3>
+        {recommendations.length === 0 ? (
+          <p className="mt-2 text-sm text-slate-600">No recommendations yet.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {recommendations.map((item) => (
+              <li key={item.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+                <p className="font-semibold text-slate-900">{item.title}</p>
+                <p className="text-slate-600">{item.author}</p>
+                <p className="mt-1 text-slate-700">{item.reason}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </article>
   )
 }
