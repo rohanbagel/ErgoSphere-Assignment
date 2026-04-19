@@ -1,6 +1,6 @@
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
-import { ThemeToggle } from './components/ThemeToggle'
+import { AnimatedThemeToggler } from './components/ui/animated-theme-toggler'
 import { AskPage } from './pages/AskPage'
 import { BookDetailPage } from './pages/BookDetailPage'
 import { BooksPage } from './pages/BooksPage'
@@ -47,7 +47,7 @@ function App() {
               citations.
             </p>
           </div>
-          <ThemeToggle />
+          <AnimatedThemeToggler className="border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring" />
         </div>
 
         <nav className="mt-5 flex gap-1 border-t border-border pt-4">
