@@ -31,7 +31,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         return []
 
     if get_embedding_backend() == "hash":
-        dimensions = int(os.getenv("EMBEDDING_HASH_DIM", "128"))
+        dimensions = int(os.getenv("EMBEDDING_HASH_DIM", "384"))
         return [_hash_embed(text, dimensions=dimensions) for text in texts]
 
     try:

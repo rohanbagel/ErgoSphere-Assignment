@@ -85,7 +85,7 @@ GROQ_API_KEY=your_key
 GROQ_MODEL=llama-3.1-8b-instant
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 EMBEDDING_BACKEND=sentence-transformers
-EMBEDDING_HASH_DIM=128
+EMBEDDING_HASH_DIM=384
 
 CHROMA_MODE=local
 CHROMA_PERSIST_DIR=./chroma_data
@@ -98,7 +98,7 @@ If your Render free instance restarts with memory-limit errors, use lightweight 
 
 ```env
 EMBEDDING_BACKEND=hash
-EMBEDDING_HASH_DIM=128
+EMBEDDING_HASH_DIM=384
 SCRAPER_DEFAULT_MAX_PAGES=2
 ```
 

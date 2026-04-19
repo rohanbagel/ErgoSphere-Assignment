@@ -10,6 +10,6 @@ services:
       - key: EMBEDDING_BACKEND
         value: hash
       - key: EMBEDDING_HASH_DIM
-        value: "128"
+        value: "384"
       - key: SCRAPER_DEFAULT_MAX_PAGES
         value: "2"
