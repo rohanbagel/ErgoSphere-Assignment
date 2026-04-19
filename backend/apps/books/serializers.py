@@ -62,6 +62,6 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class UploadBooksRequestSerializer(serializers.Serializer):
     source = serializers.CharField(required=False, default="books_to_scrape")
     start_url = serializers.URLField(required=False, default="https://books.toscrape.com/")
-    max_pages = serializers.IntegerField(required=False, default=3, min_value=1, max_value=20)
-    max_books = serializers.IntegerField(required=False, default=5, min_value=1, max_value=50)
+    max_pages = serializers.IntegerField(required=False, default=2, min_value=1, max_value=20)
+    max_books = serializers.IntegerField(required=False, default=4, min_value=1, max_value=50)
     force_reprocess = serializers.BooleanField(required=False, default=False)

@@ -5,9 +5,6 @@ from dataclasses import dataclass
 from apps.books.models import Book, BookChunk, BookInsight, QAHistory
 
 from .chunking import chunk_text
-from .embeddings import embed_text, embed_texts
-from .llm import answer_from_context, generate_insights, get_groq_model
-from .vector_store import query_chunks, upsert_chunks
 
 
 @dataclass
@@ -20,6 +17,9 @@ class Citation:
 
 
 def build_index_for_book(book: Book) -> int:
+    from .embeddings import embed_texts
+    from .vector_store import upsert_chunks
+
     raw_text = f"{book.title}\n{book.author}\n{book.category}\n{book.description}"
     chunks = chunk_text(raw_text)
     if not chunks:
@@ -61,6 +61,8 @@ def build_index_for_book(book: Book) -> int:
 
 
 def generate_and_save_insights(book: Book) -> dict:
+    from .llm import generate_insights, get_groq_model
+
     result = generate_insights(book.title, book.author, book.description)
     BookInsight.objects.update_or_create(
         book=book,
@@ -99,6 +101,10 @@ def _to_citations(payload: dict) -> list[Citation]:
 
 
 def ask_question(question: str, book_id: int | None = None, top_k: int = 5) -> dict:
+    from .embeddings import embed_text
+    from .llm import answer_from_context
+    from .vector_store import query_chunks
+
     query_vector = embed_text(question)
     where = {"book_id": int(book_id)} if book_id else None
     hits = query_chunks(query_embedding=query_vector, n_results=top_k, where=where)
@@ -137,6 +143,9 @@ def ask_question(question: str, book_id: int | None = None, top_k: int = 5) -> d
 
 
 def get_recommendations(book: Book, limit: int = 5) -> list[dict]:
+    from .embeddings import embed_text
+    from .vector_store import query_chunks
+
     query_vector = embed_text(f"{book.title} {book.description}")
     results = query_chunks(query_embedding=query_vector, n_results=limit * 5)
     citations = _to_citations(results)

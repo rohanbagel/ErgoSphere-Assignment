@@ -84,11 +84,29 @@ CORS_ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
 GROQ_API_KEY=your_key
 GROQ_MODEL=llama-3.1-8b-instant
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+EMBEDDING_BACKEND=sentence-transformers
+EMBEDDING_HASH_DIM=128
 
 CHROMA_MODE=local
 CHROMA_PERSIST_DIR=./chroma_data
 CHROMA_COLLECTION=book_chunks
 ```
+
+### Render 512MB Memory-Safe Configuration
+
+If your Render free instance restarts with memory-limit errors, use lightweight hash embeddings in production:
+
+```env
+EMBEDDING_BACKEND=hash
+EMBEDDING_HASH_DIM=128
+SCRAPER_DEFAULT_MAX_PAGES=2
+```
+
+Why this helps:
+
+- `sentence-transformers` can load large models into RAM and exceed 512MB.
+- `hash` embeddings avoid loading ML models in-process and keep memory usage stable.
+- Lower default scraper pages reduces temporary spikes during ingestion jobs.
 
 Run migrations and backend server:
 

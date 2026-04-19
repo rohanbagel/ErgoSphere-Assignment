@@ -6,3 +6,10 @@ services:
     buildCommand: pip install -r requirements.txt && python manage.py migrate
     startCommand: python -m uvicorn config.asgi:application --host 0.0.0.0 --port $PORT
     autoDeploy: true
+    envVars:
+      - key: EMBEDDING_BACKEND
+        value: hash
+      - key: EMBEDDING_HASH_DIM
+        value: "128"
+      - key: SCRAPER_DEFAULT_MAX_PAGES
+        value: "2"

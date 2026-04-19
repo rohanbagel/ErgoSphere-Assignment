@@ -4,8 +4,22 @@ import os
 import hashlib
 from functools import lru_cache
 
+
+def get_embedding_backend() -> str:
+    configured = os.getenv("EMBEDDING_BACKEND", "").strip().lower()
+    if configured in {"hash", "sentence-transformers"}:
+        return configured
+
+    # Render free instances are memory-constrained, so default to hash embeddings there.
+    if os.getenv("RENDER"):
+        return "hash"
+    return "sentence-transformers"
+
 @lru_cache(maxsize=1)
 def get_embedding_model():
+    if get_embedding_backend() != "sentence-transformers":
+        raise RuntimeError("Sentence-transformers backend is disabled")
+
     from sentence_transformers import SentenceTransformer
 
     model_name = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
@@ -15,6 +29,10 @@ def get_embedding_model():
 def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
+
+    if get_embedding_backend() == "hash":
+        dimensions = int(os.getenv("EMBEDDING_HASH_DIM", "128"))
+        return [_hash_embed(text, dimensions=dimensions) for text in texts]
 
     try:
         model = get_embedding_model()

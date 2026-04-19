@@ -4,11 +4,10 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-import chromadb
-
-
 @lru_cache(maxsize=1)
 def get_collection():
+    import chromadb
+
     mode = os.getenv("CHROMA_MODE", "local").strip().lower()
     persist_dir = os.getenv("CHROMA_PERSIST_DIR", "./chroma_data")
     collection_name = os.getenv("CHROMA_COLLECTION", "book_chunks")
